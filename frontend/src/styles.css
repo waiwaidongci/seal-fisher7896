@@ -8,3 +8,7 @@ main { background-image:linear-gradient(to right, transparent 39px, color-mix(in
 .worksheet { border:1px solid var(--ink);border-top:8px solid var(--accent); }
 th { border-top:2px solid var(--ink); }
 @media(max-width:767px){ .hero {grid-template-columns:1fr} }
+.piece-grid{display:flex;flex-wrap:wrap;gap:6px;max-width:1000px;margin:16px 0}
+.piece{font:12px/1 'IBM Plex Mono',monospace;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid var(--rule);background:color-mix(in oklch,var(--paper) 94%,var(--ink));border-radius:4px}
+.piece.miss{background:var(--accent);color:var(--paper);border-color:var(--accent);font-weight:600}
+.capacity{font-size:13px}.capacity b{font-family:'IBM Plex Mono',monospace}

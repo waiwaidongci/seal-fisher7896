@@ -1,4 +1,5 @@
 import json
+from datetime import datetime,timezone
 import numpy as np
 from sqlalchemy import select,func
 from src.config.database import Base,engine,Session
@@ -6,6 +7,7 @@ from src.config.domain import DOMAIN
 from src.models.user import User
 from src.models.study import Study
 from src.models.observation import Observation
+from src.models.seal_cluster import SealLine
 from src.models import run,review,audit
 from src.utils.security import hash_password
 
@@ -37,6 +39,12 @@ def seed():
                 key=f'DEMO-{k+1}-{n+1:04}'
                 if not db.scalar(select(Observation.id).where(Observation.study_id==study.id,Observation.source_key==key)):
                     db.add(Observation(study_id=study.id,source_key=key,values=values))
+            # 首个方案附一条产线逐件判定演示数据：中部存在明显漏封扎堆，
+            # 仅登记不自动开跑，便于在“漏封扎堆”页直接发起精确计算。
+            if k==0 and not db.scalar(select(SealLine).where(SealLine.study_id==study.id)):
+                judgments=[0]*22+[1,1,1,1,1,1,1,1]+[0]*30  # 60件，8件漏封集中在序号23-30
+                db.add(SealLine(study_id=study.id,judgments=judgments,version=1,
+                                updated_at=datetime.now(timezone.utc).isoformat()))
         db.commit()
         counts={model.__tablename__:db.scalar(select(func.count()).select_from(model)) for model in (User,Study,Observation)}
         print(json.dumps(counts));return counts
